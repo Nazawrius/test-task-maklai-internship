@@ -6,7 +6,7 @@ from nltk import ParentedTree
 
 class Paraphraser:
     tree: ParentedTree
-    limit: int
+    limit: int = 20
     paraphrased_trees: list[ParentedTree]
     paraphrase_methods: dict[str, str] = {
         'Noun phrases': 'paraphrase_noun_phrases'
@@ -33,7 +33,10 @@ class Paraphraser:
             for tree in trees_to_paraphrase:
                 self.paraphrased_trees.extend(method_func(tree))
 
-        return sample(self.paraphrased_trees, self.limit) if self.limit else self.paraphrased_trees
+        if self.limit < len(self.paraphrased_trees):
+            return sample(self.paraphrased_trees, self.limit)
+
+        return self.paraphrased_trees
 
     def paraphrase_noun_phrases(self, tree: ParentedTree) -> list[ParentedTree]:
         def condition(root: ParentedTree) -> bool:
